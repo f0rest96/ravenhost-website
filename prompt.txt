@@ -1,0 +1,208 @@
+You are a senior full-stack engineer, UI/UX designer, and DevSecOps architect.
+
+I want you to design and build a brand new main website for RavenHost at ravenhost.org from scratch.
+
+Context:
+- This is the public marketing website for a hosting company called RavenHost.
+- There is already a client/admin panel at https://panel.ravenhost.org
+- The public site must clearly direct users to the control panel for login/account management.
+- I am attaching brand assets and screenshots:
+  1. RavenHost dashboard screenshot @assets/dashboard.png & @assets/dashboard-admin.png
+  2. RavenHost transparent logo @assets/logo-dark-theme.png & @assets/logo-light-theme.png
+  3. RavenHost branded background image @assets/bacground.png
+- Use these assets as visual references for branding, tone, color palette, and overall identity.
+
+Main objective:
+Create a clean, modern, premium-looking homepage for ravenhost.org that feels consistent with the panel branding, but more polished, public-facing, and conversion-focused.
+
+High-level design direction:
+- Clean and minimal layout
+- Dark theme as default
+- Premium hosting / infrastructure / gaming-server aesthetic
+- Strong use of blue neon accents inspired by the logo and panel
+- Include tasteful 3D elements or 3D-like visuals
+- The 3D effects must feel modern and premium, not cheesy or overdone
+- Performance must remain excellent
+- Visual style should feel like a mix of:
+  - premium game hosting
+  - cloud infrastructure
+  - modern SaaS landing page
+  - subtle cyber/server room aesthetic
+
+Brand guidance:
+- Primary inspiration should come from the provided RavenHost logo, background art, and panel screenshot
+- Use the raven/server motif carefully
+- Keep the branding sharp, bold, and professional
+- Avoid clutter, excessive glow, or overly noisy visual effects
+- The panel link should be a prominent CTA in the header and hero section
+
+Site purpose:
+The homepage should explain what RavenHost offers and drive users to:
+- browse services
+- learn about the platform
+- create an account
+- access the panel at panel.ravenhost.org
+
+Target users:
+- Game server hosting customers
+- VPS / virtual machine customers
+- users who want a clean management experience
+- technically oriented customers who care about reliability, performance, and simplicity
+
+Required homepage sections:
+1. Header / Navbar
+   - RavenHost logo
+   - nav items such as Home, Services, Features, About, FAQ, Contact
+   - strong CTA button: "Client Panel" or "Login to Panel"
+   - secondary CTA: "Get Started"
+
+2. Hero section
+   - Strong headline
+   - short supporting copy
+   - primary CTA to order/get started
+   - secondary CTA to panel.ravenhost.org
+   - visually impressive branded hero
+   - include a subtle 3D or WebGL element, such as:
+     - floating server nodes
+     - animated raven-inspired abstract shape
+     - rotating wireframe/server-grid object
+     - parallax depth layers using the provided assets
+   - The 3D element must degrade gracefully if disabled
+
+3. Services overview
+   - Game Server Hosting
+   - Virtual Private Servers / VDS
+   - Infrastructure / custom hosting options if appropriate
+   - cards should be clean and modern
+
+4. Why choose RavenHost
+   - performance
+   - easy management
+   - reliable uptime
+   - secure infrastructure
+   - fast support
+   - modern control panel
+
+5. Panel integration section
+   - Explain that customers manage services through the RavenHost panel
+   - Include a visual card/mockup inspired by the supplied dashboard screenshot
+   - Prominent CTA button linking to https://panel.ravenhost.org
+
+6. Feature grid
+   - instant deployment
+   - DDoS protection
+   - backups
+   - mod/plugin support if relevant
+   - monitoring
+   - easy scaling
+   - user-friendly dashboard
+
+7. Optional pricing preview section
+   - If included, keep it simple and clean
+   - Use placeholder plans if needed, but structure it so real pricing can be inserted later
+   - Reference @assets/openapi.json for more information if pricing can be linked to the main website using API provided for the panel.
+
+8. FAQ section
+   - common hosting questions
+   - panel access
+   - billing/support
+   - uptime/security
+
+9. Footer
+   - logo
+   - quick links
+   - support links
+   - panel link
+   - legal placeholders
+   - social placeholders if useful
+
+Technical requirements:
+- Use a technology stack that is secure, modern, self-hostable, and easy to dockerize
+- Prefer one of these approaches:
+  1. Astro + Tailwind CSS + optional Three.js
+  2. Next.js + Tailwind CSS with Docker support
+  3. Laravel + Blade + Tailwind if you think that is better for simple long-term self-hosting
+- Make a recommendation and explain why you chose the stack
+- My priority is:
+  - security
+  - self-hosting
+  - Docker deployment
+  - maintainability
+  - good performance
+- If the site can be mostly static, prefer that
+- If there is any backend, keep it minimal and secure
+
+Security requirements:
+- production-safe structure
+- no unnecessary third-party dependencies
+- no insecure forms
+- sanitize all user input
+- include secure headers recommendations
+- include rate limiting advice for contact forms if one exists
+- avoid exposing secrets client-side
+- provide environment-variable examples if needed
+- add a basic deployment/security checklist
+
+Performance requirements:
+- fast initial load
+- optimized assets
+- lazy-load heavy 3D elements
+- strong Lighthouse-friendly structure
+- responsive across desktop, tablet, and mobile
+- avoid giant bundles
+- use modern image optimization strategy
+
+Design implementation requirements:
+- Build the site with real code, not just a mockup
+- Make the layout polished and production-grade
+- Keep spacing, typography, and hierarchy excellent
+- Use subtle animations and hover effects
+- Maintain accessibility and readable contrast
+- Ensure mobile navigation is well implemented
+- Use the provided images intelligently, not excessively
+- Consider using the logo in hero/floating brand areas and the background image in a refined way
+- Do not make the homepage feel like the panel UI pasted onto a landing page
+- It should feel like a dedicated main website that matches the same brand family
+
+3D / visual motion guidance:
+- Include subtle premium 3D visuals
+- Good options:
+  - animated depth/parallax hero
+  - glowing infrastructure grid
+  - floating layered server cards
+  - abstract raven-inspired animated geometry
+  - subtle WebGL background accents
+- Keep it tasteful and performant
+- Do not let the 3D distract from usability
+- Must work well on lower-end devices by reducing effects gracefully
+
+What I want you to produce:
+1. First, propose the best stack and explain the reasoning briefly
+2. Then generate the full project structure
+3. Then generate all source files needed for the homepage
+4. Include Docker support
+5. Include a README with:
+   - local development steps
+   - production build steps
+   - Docker usage
+   - deployment notes behind Nginx or reverse proxy
+6. Include placeholder content where needed, but keep it realistic and polished
+7. Use clean, reusable components
+8. Make all panel-related buttons point to https://panel.ravenhost.org
+
+Implementation preference:
+- Build the full homepage first
+- Keep the code organized and production-minded
+- Do not stop at just planning or wireframes
+- Actually generate the codebase
+- If needed, use placeholder text/assets in a way that is easy to replace later
+
+Extra polish:
+- Include SEO basics
+- Include Open Graph metadata
+- Include favicon/app icon placeholders
+- Include a contact CTA section even if no backend form is implemented yet
+- Include trust-building UI elements like status/reliability/support emphasis
+
+Important:
+Base the visual identity strongly on the attached RavenHost images and the existing panel branding, but elevate it into a cleaner, premium public-facing website.

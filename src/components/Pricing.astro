@@ -1,0 +1,174 @@
+---
+// Placeholder plans — swap for real API data when ready.
+// The panel API (FeatherPanel v1.3.3) does not expose a public pricing endpoint,
+// so plans are defined statically here.
+
+const plans = [
+  {
+    id:          'starter',
+    name:        'Starter',
+    tagline:     'Perfect for a small community or testing a new game.',
+    price:       '5',
+    period:      '/mo',
+    highlight:   false,
+    features: [
+      '2 vCPU cores',
+      '4 GB RAM',
+      '20 GB NVMe SSD',
+      '1 Gbps uplink',
+      'DDoS protection',
+      'Panel access included',
+      'Community support',
+    ],
+    cta: 'Get Started',
+    ctaHref: 'https://panel.ravenhost.org',
+  },
+  {
+    id:          'pro',
+    name:        'Pro',
+    tagline:     'For serious servers with a growing player base.',
+    price:       '15',
+    period:      '/mo',
+    highlight:   true,
+    badge:       'Best Value',
+    features: [
+      '4 vCPU cores',
+      '12 GB RAM',
+      '60 GB NVMe SSD',
+      '1 Gbps uplink',
+      'DDoS protection',
+      'Panel access included',
+      'Priority support',
+      'Automatic daily backups',
+    ],
+    cta: 'Get Started',
+    ctaHref: 'https://panel.ravenhost.org',
+  },
+  {
+    id:          'enterprise',
+    name:        'Enterprise',
+    tagline:     'Dedicated resources and priority care for large-scale deployments.',
+    price:       'Custom',
+    period:      '',
+    highlight:   false,
+    features: [
+      'Custom CPU allocation',
+      'Custom RAM & storage',
+      'Dedicated network port',
+      'SLA-backed uptime',
+      'Bare-metal options',
+      'Private VLAN available',
+      'Dedicated account manager',
+    ],
+    cta: 'Contact Sales',
+    ctaHref: '#contact',
+  },
+];
+---
+
+<section id="pricing" class="relative py-24 lg:py-32">
+  <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-brand-500/30 to-transparent" aria-hidden="true" />
+
+  <!-- Background glow -->
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true"
+    style="background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(26,111,255,0.06) 0%, transparent 70%);"
+  />
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Section header -->
+    <div class="text-center mb-16 reveal">
+      <div class="section-label justify-center">
+        <span class="inline-block w-2 h-2 rounded-full bg-brand-400" aria-hidden="true" />
+        Pricing
+      </div>
+      <h2 class="section-title text-center mb-4">Simple, Transparent Pricing</h2>
+      <p class="section-subtitle text-center mx-auto max-w-xl">
+        No hidden fees. No setup costs. Cancel anytime.
+        Prices shown are illustrative — see the panel for live pricing.
+      </p>
+    </div>
+
+    <!-- Plans -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-start">
+      {plans.map((plan) => (
+        <div
+          class={`relative flex flex-col rounded-2xl overflow-hidden border reveal
+            ${plan.highlight
+              ? 'border-brand-500/60 bg-slate-900/80 shadow-brand-lg ring-1 ring-brand-500/20 scale-[1.02]'
+              : 'border-slate-800 bg-slate-900/40 hover:border-slate-700 transition-colors'
+            }`}
+        >
+          <!-- Highlight top bar -->
+          {plan.highlight && (
+            <div class="h-1 w-full bg-gradient-to-r from-brand-600 via-brand-400 to-cyan-400 shimmer-line" aria-hidden="true" />
+          )}
+
+          <div class="p-7 flex flex-col flex-1 gap-6">
+            <!-- Plan header -->
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-sm font-semibold text-slate-400 uppercase tracking-wide">{plan.name}</span>
+                {plan.badge && (
+                  <span class="text-xs font-bold px-2.5 py-1 rounded-full bg-brand-500/20 text-brand-300 border border-brand-500/30">
+                    {plan.badge}
+                  </span>
+                )}
+              </div>
+              <div class="flex items-end gap-1 mb-2">
+                {plan.price === 'Custom' ? (
+                  <span class="text-3xl font-bold text-white">Custom</span>
+                ) : (
+                  <>
+                    <span class="text-slate-500 text-xl self-start mt-1">$</span>
+                    <span class="text-4xl font-bold text-white">{plan.price}</span>
+                    <span class="text-slate-500 text-sm mb-1">{plan.period}</span>
+                  </>
+                )}
+              </div>
+              <p class="text-sm text-slate-500">{plan.tagline}</p>
+            </div>
+
+            <!-- Divider -->
+            <div class="h-px bg-slate-800" aria-hidden="true" />
+
+            <!-- Features -->
+            <ul class="space-y-3 flex-1">
+              {plan.features.map((feat) => (
+                <li class="flex items-center gap-3 text-sm text-slate-300">
+                  <svg class={`w-4 h-4 shrink-0 ${plan.highlight ? 'text-brand-400' : 'text-slate-500'}`} fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                  </svg>
+                  {feat}
+                </li>
+              ))}
+            </ul>
+
+            <!-- CTA -->
+            <a
+              href={plan.ctaHref}
+              target={plan.ctaHref.startsWith('http') ? '_blank' : undefined}
+              rel={plan.ctaHref.startsWith('http') ? 'noopener noreferrer' : undefined}
+              class={`mt-auto w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-all duration-200
+                ${plan.highlight
+                  ? 'bg-brand-500 hover:bg-brand-400 text-white hover:shadow-brand active:scale-[0.98]'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white active:scale-[0.98]'
+                }`}
+            >
+              {plan.cta}
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Footer note -->
+    <p class="text-center text-sm text-slate-600 mt-10 reveal">
+      All plans include IPv4, automated backups, and DDoS protection.
+      Need something different? <a href="#contact" class="text-brand-400 hover:text-brand-300 underline underline-offset-2">Talk to us.</a>
+    </p>
+  </div>
+</section>

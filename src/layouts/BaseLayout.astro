@@ -1,0 +1,79 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title?:       string;
+  description?: string;
+  ogImage?:     string;
+  canonicalURL?: string;
+}
+
+const {
+  title       = 'RavenHost — Premium Game Server & VPS Hosting',
+  description = 'High-performance game server hosting, VPS, and infrastructure built for uptime and speed. Deploy in seconds, manage with ease through the RavenHost panel.',
+  ogImage     = '/og-image.png',
+  canonicalURL = Astro.url.href,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+  <!-- Primary meta -->
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- Open Graph -->
+  <meta property="og:type"        content="website" />
+  <meta property="og:url"         content={canonicalURL} />
+  <meta property="og:title"       content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image"       content={ogImage} />
+  <meta property="og:site_name"   content="RavenHost" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card"        content="summary_large_image" />
+  <meta name="twitter:title"       content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image"       content={ogImage} />
+
+  <!-- Favicon -->
+  <link rel="icon"             type="image/svg+xml" href="/favicon.svg" />
+  <link rel="icon"             type="image/png"     href="/favicon.png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Theme color -->
+  <meta name="theme-color" content="#020617" />
+
+  <!-- Robots -->
+  <meta name="robots" content="index, follow" />
+
+  <!-- Preconnect for performance (no external font CDNs — system font stack used) -->
+</head>
+
+<body class="min-h-screen overflow-x-hidden">
+  <slot />
+
+  <!-- Scroll-reveal observer -->
+  <script>
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+  </script>
+</body>
+</html>

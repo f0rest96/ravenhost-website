@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(file \"D:\\\\Coding\\\\ravenhost-website/assets\"/*)",
+      "Bash(shopt -s dotglob)",
+      "Bash(cmd:*)"
+    ]
+  }
+}

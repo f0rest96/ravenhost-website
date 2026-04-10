@@ -1,0 +1,82 @@
+---
+const faqs = [
+  {
+    q: 'How do I access and manage my services?',
+    a: 'All services are managed through the RavenHost panel at panel.ravenhost.org. Once you create an account and order a service, it appears in your dashboard immediately. You can start, stop, and configure everything from there — no SSH required for game servers.',
+  },
+  {
+    q: 'What games do you support for game server hosting?',
+    a: 'We support a wide range of popular titles including Minecraft (Java & Bedrock), Rust, ARK: Survival Evolved, Valheim, Terraria, CS2, and more. New games can often be added via custom Docker images. Contact support if you need a specific title.',
+  },
+  {
+    q: 'What is the difference between Game Server Hosting and a VPS?',
+    a: 'Game server hosting provides a managed container specifically configured for your game — we handle the OS, game files, and updates. A VPS gives you full root access to a virtual machine where you control everything, including the OS and software stack.',
+  },
+  {
+    q: 'How does billing work?',
+    a: 'Billing is handled through the panel. Services are charged monthly and invoices are generated automatically. You can view, download, and pay invoices, add payment methods, and manage plans all from the Billing section of your dashboard.',
+  },
+  {
+    q: 'Is DDoS protection included on all plans?',
+    a: 'Yes — all servers on the RavenHost network have always-on DDoS mitigation active. You do not need to enable it manually or pay extra. Both volumetric attacks and application-layer attacks are filtered.',
+  },
+  {
+    q: 'What is your uptime guarantee?',
+    a: 'We target and back a 99.9% monthly uptime SLA for all services. In the rare event of an outage attributable to our infrastructure, service credits are issued automatically. Infrastructure status is visible in the panel.',
+  },
+  {
+    q: 'Can I upgrade or downgrade my plan?',
+    a: 'Yes. Plan upgrades take effect within minutes and your data is preserved. Downgrades are processed at the end of the billing cycle. Contact support if you need help selecting the right plan size.',
+  },
+  {
+    q: 'How do I get support?',
+    a: 'Open a support ticket directly from the panel under the Support section. Our team monitors tickets around the clock. For urgent infrastructure issues, priority response applies on Pro and Enterprise plans.',
+  },
+];
+---
+
+<section id="faq" class="relative py-24 lg:py-32 bg-slate-950/60">
+  <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-slate-700/40 to-transparent" aria-hidden="true" />
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Section header -->
+    <div class="text-center mb-16 reveal">
+      <div class="section-label justify-center">
+        <span class="inline-block w-2 h-2 rounded-full bg-brand-400" aria-hidden="true" />
+        FAQ
+      </div>
+      <h2 class="section-title text-center mb-4">Common Questions</h2>
+      <p class="section-subtitle text-center mx-auto">
+        Can't find what you need? <a href="#contact" class="text-brand-400 hover:text-brand-300 underline underline-offset-2">Reach out to support.</a>
+      </p>
+    </div>
+
+    <!-- Accordion -->
+    <div class="space-y-3">
+      {faqs.map((item, i) => (
+        <details
+          class="card border border-slate-800 rounded-xl overflow-hidden group reveal"
+          style={`animation-delay: ${i * 0.05}s`}
+        >
+          <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer text-white font-medium
+                          hover:bg-slate-800/40 transition-colors duration-200 select-none
+                          focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-500">
+            <span class="text-sm sm:text-base leading-snug">{item.q}</span>
+            <svg
+              class="faq-arrow w-5 h-5 text-slate-500 shrink-0 transition-transform duration-250"
+              fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+              aria-hidden="true"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
+            </svg>
+          </summary>
+          <div class="px-6 pb-5 pt-1">
+            <p class="text-sm text-slate-400 leading-relaxed">{item.a}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+
+  </div>
+</section>

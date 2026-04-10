@@ -1,0 +1,160 @@
+---
+const navLinks = [
+  { label: 'Services',  href: '#services'  },
+  { label: 'Features',  href: '#features'  },
+  { label: 'About',     href: '#why-us'    },
+  { label: 'Pricing',   href: '#pricing'   },
+  { label: 'FAQ',       href: '#faq'       },
+  { label: 'Contact',   href: '#contact'   },
+];
+---
+
+<header
+  id="site-header"
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent"
+>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-3 shrink-0 group" aria-label="RavenHost home">
+        <img
+          src="/assets/logo-dark-theme.png"
+          alt="RavenHost logo"
+          class="h-9 w-auto transition-transform duration-300 group-hover:scale-105"
+          width="48" height="64"
+        />
+        <span class="font-bold text-lg text-white tracking-tight hidden sm:inline">
+          RavenHost
+        </span>
+      </a>
+
+      <!-- Desktop nav -->
+      <nav class="hidden lg:flex items-center gap-7" aria-label="Main navigation">
+        {navLinks.map(({ label, href }) => (
+          <a
+            href={href}
+            class="text-sm text-slate-400 hover:text-white transition-colors duration-200 relative group"
+          >
+            {label}
+            <span class="absolute -bottom-0.5 left-0 w-0 h-px bg-brand-400 transition-all duration-300 group-hover:w-full" />
+          </a>
+        ))}
+      </nav>
+
+      <!-- Desktop CTAs -->
+      <div class="hidden lg:flex items-center gap-3">
+        <a
+          href="https://panel.ravenhost.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-ghost text-sm py-2 px-4"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 17.25v1.007a3 3 0 0 1-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0 1 15 18.257V17.25m6-12V15a2.25 2.25 0 0 1-2.25 2.25H5.25A2.25 2.25 0 0 1 3 15V5.25m18 0A2.25 2.25 0 0 0 18.75 3H5.25A2.25 2.25 0 0 0 3 5.25m18 0H3" />
+          </svg>
+          Client Panel
+        </a>
+        <a href="#services" class="btn-primary text-sm py-2 px-5">
+          Get Started
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+          </svg>
+        </a>
+      </div>
+
+      <!-- Mobile hamburger -->
+      <button
+        id="menu-toggle"
+        class="lg:hidden flex flex-col items-center justify-center w-10 h-10 gap-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800/60 transition-colors"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="hamburger-line block w-5 h-px bg-current transition-all duration-300" />
+        <span class="hamburger-line block w-5 h-px bg-current transition-all duration-300" />
+        <span class="hamburger-line block w-5 h-px bg-current transition-all duration-300" />
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile menu -->
+  <div
+    id="mobile-menu"
+    class="lg:hidden hidden border-t border-slate-800 bg-slate-950/95 backdrop-blur-md"
+    aria-label="Mobile navigation"
+  >
+    <nav class="max-w-7xl mx-auto px-4 py-4 flex flex-col gap-1">
+      {navLinks.map(({ label, href }) => (
+        <a
+          href={href}
+          class="mobile-nav-link px-4 py-3 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800/60 transition-colors font-medium"
+        >
+          {label}
+        </a>
+      ))}
+      <div class="pt-3 mt-2 border-t border-slate-800 flex flex-col gap-2">
+        <a
+          href="https://panel.ravenhost.org"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-ghost justify-center text-sm py-2.5"
+        >
+          Client Panel
+        </a>
+        <a href="#services" class="btn-primary justify-center text-sm py-2.5 mobile-nav-link">
+          Get Started
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  const header     = document.getElementById('site-header')!;
+  const toggle     = document.getElementById('menu-toggle')!;
+  const mobileMenu = document.getElementById('mobile-menu')!;
+
+  // Scroll: add backdrop blur + border when scrolled
+  const handleScroll = () => {
+    if (window.scrollY > 20) {
+      header.classList.add('bg-slate-950/90', 'backdrop-blur-md', 'border-slate-800/60');
+    } else {
+      header.classList.remove('bg-slate-950/90', 'backdrop-blur-md', 'border-slate-800/60');
+    }
+  };
+  window.addEventListener('scroll', handleScroll, { passive: true });
+  handleScroll();
+
+  // Mobile menu toggle
+  let isOpen = false;
+  toggle.addEventListener('click', () => {
+    isOpen = !isOpen;
+    mobileMenu.classList.toggle('hidden', !isOpen);
+    toggle.setAttribute('aria-expanded', String(isOpen));
+    // Animate hamburger lines
+    const lines = toggle.querySelectorAll<HTMLSpanElement>('.hamburger-line');
+    if (isOpen) {
+      lines[0]!.style.transform = 'translateY(7px) rotate(45deg)';
+      lines[1]!.style.opacity = '0';
+      lines[2]!.style.transform = 'translateY(-7px) rotate(-45deg)';
+    } else {
+      lines[0]!.style.transform = '';
+      lines[1]!.style.opacity = '';
+      lines[2]!.style.transform = '';
+    }
+  });
+
+  // Close menu on nav link click
+  document.querySelectorAll('.mobile-nav-link').forEach((link) => {
+    link.addEventListener('click', () => {
+      isOpen = false;
+      mobileMenu.classList.add('hidden');
+      toggle.setAttribute('aria-expanded', 'false');
+      const lines = toggle.querySelectorAll<HTMLSpanElement>('.hamburger-line');
+      lines[0]!.style.transform = '';
+      lines[1]!.style.opacity = '';
+      lines[2]!.style.transform = '';
+    });
+  });
+</script>

@@ -1,0 +1,12 @@
+node_modules
+dist
+.astro
+.git
+.github
+.vscode
+*.log
+*.md
+.env
+.env.*
+.dockerignore
+docker-compose*.yml
