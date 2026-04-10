@@ -10,9 +10,19 @@
 set -euo pipefail
 
 REPO_URL="https://github.com/f0rest96/ravenhost-website.git"
+REPO_DIR_NAME="ravenhost-website"
 CONTAINER_NAME="ravenhost-web"
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ENV_FILE="$SCRIPT_DIR/.env"
+
+# If the script is being run from outside the repo (e.g. from ~), install
+# the site into a ravenhost-website/ subfolder next to the script.
+if [ ! -f "$SCRIPT_DIR/package.json" ] && [ "$(basename "$SCRIPT_DIR")" != "$REPO_DIR_NAME" ]; then
+  INSTALL_DIR="$SCRIPT_DIR/$REPO_DIR_NAME"
+else
+  INSTALL_DIR="$SCRIPT_DIR"
+fi
+
+ENV_FILE="$INSTALL_DIR/.env"
 
 # ── Colours ───────────────────────────────────────────────────────────────────
 G='\033[0;32m'; Y='\033[1;33m'; R='\033[0;31m'; B='\033[1;34m'; N='\033[0m'
@@ -60,26 +70,12 @@ export PORT
 
 # ── Check if site files are present ──────────────────────────────────────────
 SITE_INSTALLED=false
-[ -f "$SCRIPT_DIR/package.json" ] && SITE_INSTALLED=true
+[ -f "$INSTALL_DIR/package.json" ] && SITE_INSTALLED=true
 
 if [ "$SITE_INSTALLED" = false ]; then
-  info "Site not found in $SCRIPT_DIR. Cloning repository..."
-  if [ -z "$(ls -A "$SCRIPT_DIR" 2>/dev/null)" ]; then
-    git clone "$REPO_URL" "$SCRIPT_DIR"
-  else
-    # Directory has files (e.g. just this script). Clone into a temp dir and merge.
-    TMP=$(mktemp -d)
-    git clone "$REPO_URL" "$TMP"
-    cp -rn "$TMP"/. "$SCRIPT_DIR/" 2>/dev/null || true
-    rm -rf "$TMP"
-    # Initialise git in place
-    git -C "$SCRIPT_DIR" init -q
-    git -C "$SCRIPT_DIR" remote add origin "$REPO_URL" 2>/dev/null || true
-    git -C "$SCRIPT_DIR" fetch origin main --depth=1 -q
-    git -C "$SCRIPT_DIR" reset --hard origin/main -q 2>/dev/null || true
-  fi
+  info "Site not found. Cloning repository into $INSTALL_DIR ..."
+  git clone "$REPO_URL" "$INSTALL_DIR"
   log "Repository ready."
-  SITE_INSTALLED=true
   FRESH_INSTALL=true
 else
   FRESH_INSTALL=false
@@ -88,7 +84,7 @@ fi
 # ── Pull latest changes (skip on fresh install, already up to date) ───────────
 if [ "$FRESH_INSTALL" = false ]; then
   info "Pulling latest changes..."
-  git -C "$SCRIPT_DIR" pull --ff-only || warn "git pull failed - continuing with local files."
+  git -C "$INSTALL_DIR" pull --ff-only || warn "git pull failed - continuing with local files."
 fi
 
 # ── Check container state ─────────────────────────────────────────────────────
@@ -103,7 +99,7 @@ is_stopped() {
 }
 
 # ── Build & run ───────────────────────────────────────────────────────────────
-cd "$SCRIPT_DIR"
+cd "$INSTALL_DIR"
 
 if [ "$FRESH_INSTALL" = true ]; then
   info "Fresh install - building image and starting container on port $PORT..."
