@@ -10,13 +10,7 @@ export default defineConfig({
   },
   vite: {
     build: {
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            three: ['three'],
-          },
-        },
-      },
+      rollupOptions: {},
     },
   },
 });
