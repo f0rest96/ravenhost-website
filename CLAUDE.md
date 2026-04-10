@@ -52,8 +52,9 @@ Each homepage section is a standalone Astro component in `src/components/`. Sect
 
 `Hero.astro` contains an inline `<script>` that dynamically imports `three` (code-split by Vite into its own chunk). It:
 1. Checks `prefers-reduced-motion` and WebGL availability before loading
-2. Renders a rotating icosahedron core + orbiting satellite nodes + particle dust
-3. Adds mouse-parallax camera movement
+2. Renders a server rack wireframe (centre) with orbiting server node boxes, hub-and-spoke connection lines, and animated data-flow particles travelling along each spoke
+3. The canvas is pinned to the **right half** of the hero (`right-0 w-1/2 h-full`) so it never overlaps the headline text
+4. Adds mouse-parallax camera movement
 
 ### Scroll animations
 
@@ -62,6 +63,10 @@ Each homepage section is a standalone Astro component in `src/components/`. Sect
 ### Colours
 
 All brand colours use the custom `brand.*` Tailwind scale. Use `text-brand-400` / `bg-brand-500` for accents. Backgrounds use Tailwind's built-in `slate-950` / `slate-900` / `slate-800`.
+
+### Copy style
+
+Use regular hyphens (`-`) in all copy, not em dashes (`—`). Favicon is `public/assets/logo-dark-theme.png`.
 
 ### Panel URL
 

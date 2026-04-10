@@ -28,19 +28,13 @@
     />
   </div>
 
-  <!-- Three.js canvas (right side accent, fills the section) -->
+  <!-- Three.js canvas (right half only) -->
   <canvas
     id="hero-canvas"
-    class="absolute inset-0 w-full h-full pointer-events-none"
+    class="absolute top-0 right-0 w-1/2 h-full pointer-events-none"
     aria-hidden="true"
   />
 
-  <!-- Left-side gradient to ensure text readability -->
-  <div
-    class="absolute inset-y-0 left-0 w-2/3 pointer-events-none"
-    aria-hidden="true"
-    style="background: linear-gradient(to right, rgba(2,6,23,0.92) 40%, transparent 100%);"
-  />
 
   <!-- Hero content -->
   <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32 w-full">
@@ -142,80 +136,119 @@
   const THREE = await import('three');
 
   // ── Scene setup ──────────────────────────────────────────────
-  const scene    = new THREE.Scene();
-  const width    = canvas.clientWidth;
-  const height   = canvas.clientHeight;
-  const camera   = new THREE.PerspectiveCamera(55, width / height, 0.1, 200);
-  camera.position.set(0, 0, 8);
+  const scene  = new THREE.Scene();
+  const width  = canvas.clientWidth;
+  const height = canvas.clientHeight;
+  const camera = new THREE.PerspectiveCamera(55, width / height, 0.1, 200);
+  camera.position.set(0, 0, 9);
 
   const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
   renderer.setSize(width, height, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer.setClearColor(0x000000, 0);
 
-  // ── Central wireframe core ────────────────────────────────────
-  const coreGeo    = new THREE.IcosahedronGeometry(1.4, 1);
-  const coreEdges  = new THREE.EdgesGeometry(coreGeo);
-  const coreMat    = new THREE.LineBasicMaterial({ color: 0x1a6fff, transparent: true, opacity: 0.55 });
-  const coreLines  = new THREE.LineSegments(coreEdges, coreMat);
-  scene.add(coreLines);
+  // ── Central server rack ───────────────────────────────────────
+  const rackGroup = new THREE.Group();
+  scene.add(rackGroup);
 
-  // Inner smaller icosahedron
-  const innerGeo   = new THREE.IcosahedronGeometry(0.75, 0);
-  const innerEdges = new THREE.EdgesGeometry(innerGeo);
-  const innerMat   = new THREE.LineBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.7 });
-  const innerLines = new THREE.LineSegments(innerEdges, innerMat);
-  scene.add(innerLines);
+  // Outer rack frame
+  const rackW = 0.9, rackH = 2.6, rackD = 0.55;
+  const rackEdges = new THREE.EdgesGeometry(new THREE.BoxGeometry(rackW, rackH, rackD));
+  rackGroup.add(new THREE.LineSegments(rackEdges,
+    new THREE.LineBasicMaterial({ color: 0x1a6fff, transparent: true, opacity: 0.85 })));
 
-  // ── Orbiting satellite nodes ──────────────────────────────────
-  const nodeCount  = 7;
-  const nodeRadius = 3.0;
-  type OrbNode = { mesh: THREE.Mesh; angle: number; speed: number; yBias: number; orbitTilt: number };
+  // Server unit shelves + LED indicators
+  const SHELF_COUNT = 7;
+  for (let i = 0; i < SHELF_COUNT; i++) {
+    const y = -rackH / 2 + 0.28 + i * ((rackH - 0.42) / (SHELF_COUNT - 1));
+
+    // Shelf line across the front face
+    const shelfPts = [
+      new THREE.Vector3(-rackW / 2 + 0.06, y, rackD / 2 + 0.001),
+      new THREE.Vector3( rackW / 2 - 0.06, y, rackD / 2 + 0.001),
+    ];
+    rackGroup.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(shelfPts),
+      new THREE.LineBasicMaterial({ color: i % 2 === 0 ? 0x00d4ff : 0x1a6fff, transparent: true, opacity: 0.45 }),
+    ));
+
+    // Green LED dot (right side of each shelf)
+    const ledPts = [
+      new THREE.Vector3(rackW / 2 - 0.18, y, rackD / 2 + 0.002),
+      new THREE.Vector3(rackW / 2 - 0.14, y, rackD / 2 + 0.002),
+    ];
+    rackGroup.add(new THREE.Line(
+      new THREE.BufferGeometry().setFromPoints(ledPts),
+      new THREE.LineBasicMaterial({ color: 0x00ff88, transparent: true, opacity: 0.95 }),
+    ));
+  }
+
+  // ── Orbiting server node boxes ────────────────────────────────
+  const NODE_COUNT = 6;
+  type OrbNode = {
+    group: THREE.Group;
+    angle: number;
+    speed: number;
+    radius: number;
+    yBias: number;
+    tilt: number;
+  };
   const orbitNodes: OrbNode[] = [];
 
-  const octGeo = new THREE.OctahedronGeometry(0.08, 0);
-  const BLUE_COLORS = [0x1a6fff, 0x00a8ff, 0x00d4ff, 0x3a8fff];
+  const NODE_COLORS = [0x1a6fff, 0x00d4ff, 0x3a8fff, 0x1a6fff, 0x00a8ff, 0x00d4ff];
 
-  for (let i = 0; i < nodeCount; i++) {
-    const angle = (i / nodeCount) * Math.PI * 2;
-    const mat   = new THREE.MeshBasicMaterial({
-      color: BLUE_COLORS[i % BLUE_COLORS.length],
-    });
-    const mesh  = new THREE.Mesh(octGeo, mat);
-    const scale = 0.8 + Math.random() * 1.4;
-    mesh.scale.setScalar(scale);
-    scene.add(mesh);
+  for (let i = 0; i < NODE_COUNT; i++) {
+    const g = new THREE.Group();
+    const nw = 0.22 + Math.random() * 0.1;
+    const nh = 0.13 + Math.random() * 0.07;
+    g.add(new THREE.LineSegments(
+      new THREE.EdgesGeometry(new THREE.BoxGeometry(nw, nh, nh * 0.65)),
+      new THREE.LineBasicMaterial({ color: NODE_COLORS[i], transparent: true, opacity: 0.9 }),
+    ));
+    scene.add(g);
     orbitNodes.push({
-      mesh,
-      angle,
-      speed:     0.18 + Math.random() * 0.15,
-      yBias:     (Math.random() - 0.5) * 1.2,
-      orbitTilt: (Math.random() - 0.5) * 0.6,
+      group: g,
+      angle: (i / NODE_COUNT) * Math.PI * 2,
+      speed: 0.11 + Math.random() * 0.09,
+      radius: 2.7 + Math.random() * 0.9,
+      yBias: (Math.random() - 0.5) * 1.6,
+      tilt:  (Math.random() - 0.5) * 0.5,
     });
   }
 
-  // ── Connecting lines (hub-and-spoke: center → each satellite) ──
-  const hubLinePositions = new Float32Array(nodeCount * 6); // 2 verts × 3 floats each
-  const hubLineGeo = new THREE.BufferGeometry();
-  hubLineGeo.setAttribute('position', new THREE.BufferAttribute(hubLinePositions, 3));
-  const hubLineMat = new THREE.LineBasicMaterial({ color: 0x1a6fff, transparent: true, opacity: 0.18 });
-  const hubLines   = new THREE.LineSegments(hubLineGeo, hubLineMat);
-  scene.add(hubLines);
+  // ── Hub-and-spoke connection lines ────────────────────────────
+  const spokePositions = new Float32Array(NODE_COUNT * 6);
+  const spokeGeo = new THREE.BufferGeometry();
+  spokeGeo.setAttribute('position', new THREE.BufferAttribute(spokePositions, 3));
+  scene.add(new THREE.LineSegments(spokeGeo,
+    new THREE.LineBasicMaterial({ color: 0x1a6fff, transparent: true, opacity: 0.14 })));
+
+  // ── Data-flow particles (travel center → each node) ──────────
+  const PPS = 3; // particles per spoke
+  const flowTotal = NODE_COUNT * PPS;
+  const flowPos = new Float32Array(flowTotal * 3);
+  const flowGeo = new THREE.BufferGeometry();
+  flowGeo.setAttribute('position', new THREE.BufferAttribute(flowPos, 3));
+  scene.add(new THREE.Points(flowGeo,
+    new THREE.PointsMaterial({ color: 0x00d4ff, size: 0.07, transparent: true, opacity: 0.95 })));
+
+  // stagger starting positions so they don't all cluster at once
+  const flowT = Array.from({ length: flowTotal }, (_, i) => (i % PPS) / PPS);
 
   // ── Background particle dust ──────────────────────────────────
-  const PARTICLE_COUNT = 280;
-  const pGeo           = new THREE.BufferGeometry();
-  const pPositions     = new Float32Array(PARTICLE_COUNT * 3);
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    pPositions[i * 3]     = (Math.random() - 0.5) * 22;
-    pPositions[i * 3 + 1] = (Math.random() - 0.5) * 16;
-    pPositions[i * 3 + 2] = (Math.random() - 0.5) * 12;
+  const DUST = 220;
+  const dustPos = new Float32Array(DUST * 3);
+  for (let i = 0; i < DUST; i++) {
+    dustPos[i * 3]     = (Math.random() - 0.5) * 22;
+    dustPos[i * 3 + 1] = (Math.random() - 0.5) * 14;
+    dustPos[i * 3 + 2] = (Math.random() - 0.5) * 10;
   }
-  pGeo.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
-  const pMat = new THREE.PointsMaterial({ color: 0x1a4080, size: 0.035, transparent: true, opacity: 0.55 });
-  scene.add(new THREE.Points(pGeo, pMat));
+  const dustGeo = new THREE.BufferGeometry();
+  dustGeo.setAttribute('position', new THREE.BufferAttribute(dustPos, 3));
+  scene.add(new THREE.Points(dustGeo,
+    new THREE.PointsMaterial({ color: 0x1a3060, size: 0.03, transparent: true, opacity: 0.5 })));
 
-  // ── Mouse parallax ───────────────────────────────────────────
+  // ── Mouse parallax ────────────────────────────────────────────
   let targetX = 0, targetY = 0, currentX = 0, currentY = 0;
   window.addEventListener('mousemove', (e: MouseEvent) => {
     targetX = ((e.clientX / window.innerWidth)  - 0.5) * 0.6;
@@ -223,33 +256,40 @@
   }, { passive: true });
 
   // ── Animation loop ────────────────────────────────────────────
-  let animId: number;
-  const animate = () => {
-    animId = requestAnimationFrame(animate);
+  const flowBuf = flowGeo.attributes.position as THREE.BufferAttribute;
+  const spokeBuf = spokeGeo.attributes.position as THREE.BufferAttribute;
 
+  const animate = () => {
+    requestAnimationFrame(animate);
     const t = performance.now() * 0.001;
 
-    // Core rotation
-    coreLines.rotation.x  = t * 0.22;
-    coreLines.rotation.y  = t * 0.35;
-    innerLines.rotation.x = -t * 0.30;
-    innerLines.rotation.y =  t * 0.45;
+    // Rack slowly rotates
+    rackGroup.rotation.y = t * 0.12;
 
-    // Orbit satellites
-    const pos = hubLineGeo.attributes.position as THREE.BufferAttribute;
+    // Orbit nodes + update spokes + flow particles
     orbitNodes.forEach((node, i) => {
       node.angle += node.speed * 0.008;
-      const r = nodeRadius;
-      node.mesh.position.x = Math.cos(node.angle) * r;
-      node.mesh.position.z = Math.sin(node.angle) * r * 0.6;
-      node.mesh.position.y = node.yBias + Math.sin(node.angle * 1.5 + node.orbitTilt) * 0.8;
-      node.mesh.rotation.y = t * 1.2;
+      const nx = Math.cos(node.angle) * node.radius;
+      const nz = Math.sin(node.angle) * node.radius * 0.5;
+      const ny = node.yBias + Math.sin(node.angle * 1.3 + node.tilt) * 0.65;
+      node.group.position.set(nx, ny, nz);
+      node.group.rotation.y = t * 0.9;
 
-      // Hub spoke: origin → node
-      pos.setXYZ(i * 2,     0, 0, 0);
-      pos.setXYZ(i * 2 + 1, node.mesh.position.x, node.mesh.position.y, node.mesh.position.z);
+      // Spoke center → node
+      spokeBuf.setXYZ(i * 2,     0,  0,  0);
+      spokeBuf.setXYZ(i * 2 + 1, nx, ny, nz);
+
+      // Flow particles along spoke
+      for (let p = 0; p < PPS; p++) {
+        const fi = i * PPS + p;
+        flowT[fi] = (flowT[fi] + 0.0045) % 1.0;
+        const s = flowT[fi];
+        flowBuf.setXYZ(fi, nx * s, ny * s, nz * s);
+      }
     });
-    pos.needsUpdate = true;
+
+    spokeBuf.needsUpdate = true;
+    flowBuf.needsUpdate  = true;
 
     // Camera parallax lerp
     currentX += (targetX - currentX) * 0.04;
