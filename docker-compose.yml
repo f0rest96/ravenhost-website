@@ -10,14 +10,3 @@ services:
       - "127.0.0.1:${PORT:-3002}:80"   # loopback only — cloudflared tunnels this to the web
     environment:
       - TZ=UTC
-    read_only: true
-    tmpfs:
-      - /var/cache/nginx
-      - /var/run
-      - /tmp
-    security_opt:
-      - no-new-privileges:true
-    cap_drop:
-      - ALL
-    cap_add:
-      - NET_BIND_SERVICE
